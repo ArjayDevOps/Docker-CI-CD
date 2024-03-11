@@ -4,7 +4,7 @@ RUN mkdir -p /home/node-app
 
 COPY ./app /home/node-app 
 
-# Specify the port your website is listening on (e.g., 80 for HTTP)
+# Specify the port your website is listening on (e.g., 80 for HTTP)zzz
 EXPOSE 3000
 
 CMD ["node", "/home/app/server.js"] 
