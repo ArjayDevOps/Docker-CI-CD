@@ -1,0 +1,10 @@
+1st install node and npm on jenkins server
+2nd start jenkins server
+3rd make sure jenkins user into our jenkins server has a permision to run some docker command if not use this one
+ - sudo usermod -aG docker jenkins
+4th install aws-cli2 to connect us to the Elastic Container Repository
+5th configure jenkins and add plugin to aws credentials
+6th add the access key and secret key inside the credentials
+7th create jenkins pipe line
+8th Run Job
+

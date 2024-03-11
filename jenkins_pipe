@@ -6,19 +6,21 @@ pipeline {
     }
 
     stages {
-        stage('Build') {
+        stage('Checkout the Repository') {
             steps {
-                // Pull the Docker image you want to use
-                sh 'docker pull <your-docker-image>'
+                // Checkout Git Project
+                checkout changelog: false, poll: false, scm: scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/ArjayDevOps/Docker-CI-CD.git']])
+
+                sh 'docker build -t <your-docker-image> .'
             }
         }
-        stage('Test') {
+        stage('Build Images Artifact') {
             steps {
                 // Run tests inside a Docker container
                 sh 'docker run <your-docker-image> npm test'
             }
         }
-        stage('Deploy') {
+        stage('Push to the Private Repository') {
             steps {
                 // Build and push Docker image
                 sh 'docker build -t <your-docker-image> .'

@@ -1,0 +1,34 @@
+pipeline {
+    agent any
+
+    //setup environment variables
+    environment {
+        AWS_DEFAULT_REGION = 'ap-southeast-2' // Set your AWS region
+        ECR_REGISTRY = '129350621020.dkr.ecr.ap-southeast-2.amazonaws.com' // Replace with your ECR registry URL
+        IMAGE_TAG = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim() // Use git commit hash as image tag
+    }
+
+    stages {
+        stage('Checkout the Repository') {
+            steps {
+                // Checkout Git Project
+                git branch: 'main', changelog: false, poll: false, url: 'https://github.com/ArjayDevOps/Docker-CI-CD.git'
+            }
+        }
+        stage('Build Images Artifact') {
+            steps {
+                // creating docker image from Dockerfile
+                sh 'docker build -t $ECR_REGISTRY/docker-ci-cd:$IMAGE_TAG .'
+            }
+        }
+        stage('Push Docker Image to ECR') {
+            steps {
+                // Push images in private Repository ECR
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws_credentials_id', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+                    sh "aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY"
+                    sh "docker push $ECR_REGISTRY/docker-ci-cd:$IMAGE_TAG"
+                }
+            }
+        }
+    }
+}
