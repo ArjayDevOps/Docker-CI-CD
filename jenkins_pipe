@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+
+    tools {
+        nodejs "node"
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                // Pull the Docker image you want to use
+                sh 'docker pull <your-docker-image>'
+            }
+        }
+        stage('Test') {
+            steps {
+                // Run tests inside a Docker container
+                sh 'docker run <your-docker-image> npm test'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                // Build and push Docker image
+                sh 'docker build -t <your-docker-image> .'
+                sh 'docker push <your-docker-image>'
+            }
+        }
+    }
+}
